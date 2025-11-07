@@ -5,11 +5,11 @@
 The goal of this project is to design and test a scalable ETL (Extract – Transform – Load) architecture operating in a cloud environment.
 The main focus is not on processing a specific type of data, but on engineering and evaluating the scalability, resilience, and performance of the entire data pipeline.
 
-🎯 Project Objectives
+## 🎯 Project Objectives
 
 The project demonstrates how modern cloud-native tools such as Docker, Kubernetes, Azure Data Factory, and Apache Airflow can work together to build a scalable and flexible ETL system.
 
-🔍 Research and Testing Scope
+## 🔍 Research and Testing Scope
 
 The project focuses on analyzing and testing the following aspects of the ETL system:
 
@@ -21,7 +21,7 @@ Automatic Scaling (Auto-Scaling) – observing how Kubernetes (Horizontal Pod Au
 
 Monitoring and Metrics – implementing an observability stack using Prometheus and Grafana to measure performance, CPU/RAM utilization, and processing time.
 
-🧠 Key Goal
+## 🧠 Key Goal
 
 The project has a research-engineering character.
 Its main outcomes include:
@@ -32,7 +32,8 @@ an analysis of how cluster configuration and parameters affect data processing e
 
 documentation of results and recommendations for optimizing data pipelines in the cloud.
 
-🚀 Project Roadmap
+##🚀 Project Roadmap
+
 1️⃣ Containerization
 
 Create a Dockerfile for the ETL application.
