@@ -1,6 +1,6 @@
 # ScalableETL
 
-🧩 General Concept of the Project
+## 🧩 General Concept of the Project
 
 The goal of this project is to design and test a scalable ETL (Extract – Transform – Load) architecture operating in a cloud environment.
 The main focus is not on processing a specific type of data, but on engineering and evaluating the scalability, resilience, and performance of the entire data pipeline.
