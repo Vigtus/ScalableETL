@@ -1,32 +1,33 @@
 # ScalableETL
 
-🧩 Ogólna koncepcja projektu
+🧩 General Concept of the Project
 
-Celem projektu jest zaprojektowanie i przetestowanie skalowalnej architektury procesu ETL (Extract – Transform – Load) działającej w środowisku chmurowym.
-Nie skupia się on na przetwarzaniu konkretnego typu danych, lecz na inżynierii i wydajności całego pipeline’u – jego odporności, elastyczności i możliwości automatycznego skalowania.
+The goal of this project is to design and test a scalable ETL (Extract – Transform – Load) architecture operating in a cloud environment.
+The main focus is not on processing a specific type of data, but on engineering and evaluating the scalability, resilience, and performance of the entire data pipeline.
 
-🎯 Założenia projektu
+🎯 Project Objectives
 
-Projekt ma pokazać, jak nowoczesne narzędzia chmurowe (takie jak Docker, Kubernetes, Azure Data Factory czy Apache Airflow) mogą współpracować w celu budowy skalowalnego systemu przetwarzania danych.
+The project demonstrates how modern cloud-native tools such as Docker, Kubernetes, Azure Data Factory, and Apache Airflow can work together to build a scalable and flexible ETL system.
 
-🔍 Zakres badań i testów
+🔍 Research and Testing Scope
 
-W ramach realizacji projektu analizowane są następujące aspekty działania systemu:
+The project focuses on analyzing and testing the following aspects of the ETL system:
 
-Skalowalność – jak pipeline reaguje na zwiększenie ilości danych wejściowych (np. wzrost rozmiaru plików CSV lub liczby rekordów).
+Scalability – evaluating how the pipeline reacts to an increasing amount of input data (e.g., larger CSV files or more records).
 
-Równoległość zadań – testy zachowania systemu przy jednoczesnym uruchamianiu wielu procesów ETL.
+Parallel Execution – assessing system behavior under concurrent ETL job execution.
 
-Automatyczne skalowanie (Auto-Scaling) – w jaki sposób Kubernetes (Horizontal Pod Autoscaler) zwiększa liczbę replik kontenerów przy wzroście obciążenia i jak szybko reaguje na zmiany.
+Automatic Scaling (Auto-Scaling) – observing how Kubernetes (Horizontal Pod Autoscaler) dynamically increases the number of replicas under higher workload and how quickly it reacts to load changes.
 
-Monitorowanie i metryki – implementacja systemu obserwowalności z wykorzystaniem Prometheus i Grafana do pomiaru wydajności, obciążenia CPU/RAM oraz czasu przetwarzania danych.
+Monitoring and Metrics – implementing an observability stack using Prometheus and Grafana to measure performance, CPU/RAM utilization, and processing time.
 
-🧠 Kluczowy cel
+🧠 Key Goal
 
-Projekt ma charakter badawczo-inżynierski – jego głównym rezultatem jest:
+The project has a research-engineering character.
+Its main outcomes include:
 
-praktyczna demonstracja działania skalowalnego procesu ETL w środowisku konteneryzowanym,
+a practical demonstration of a scalable ETL process running in a containerized environment,
 
-analiza wpływu konfiguracji i parametrów klastra na efektywność przetwarzania,
+an analysis of how cluster configuration and parameters affect data processing efficiency,
 
-dokumentacja wyników i rekomendacji dotyczących optymalizacji pipeline’ów danych.
+documentation of results and recommendations for optimizing data pipelines in the cloud.
