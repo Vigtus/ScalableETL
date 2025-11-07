@@ -32,11 +32,7 @@ an analysis of how cluster configuration and parameters affect data processing e
 
 documentation of results and recommendations for optimizing data pipelines in the cloud.
 
-
-
 🚀 Project Roadmap
-
-
 1️⃣ Containerization
 
 Create a Dockerfile for the ETL application.
