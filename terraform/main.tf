@@ -1,42 +1,90 @@
+##############################################
+# main.tf – główny plik infrastruktury
+##############################################
+
+##############################################
 # Resource Group
+##############################################
+
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-scalable-etl"
-  location = "centralus"
+  name     = var.resource_group_name
+  location = var.location
 }
 
-# Storage Account
+##############################################
+# 📦 Azure Storage Account
+##############################################
+
 resource "azurerm_storage_account" "storage" {
   name                     = "scalableetlstorage"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
+
+  https_traffic_only_enabled = true
+  min_tls_version            = "TLS1_2"
+
+  blob_properties {
+    versioning_enabled = false
+  }
 }
 
-# Blob Container (na dane wejściowe)
-resource "azurerm_storage_container" "input_data" {
-  name                  = "input-data"
-  storage_account_name  = azurerm_storage_account.storage.name
-  container_access_type = "private"
+
+##############################################
+# Event Grid
+##############################################
+
+resource "azurerm_eventgrid_system_topic" "etl_topic" {
+  name                   = "etl-event-topic"
+  resource_group_name    = azurerm_resource_group.rg.name
+  location               = azurerm_resource_group.rg.location
+  source_arm_resource_id = azurerm_storage_account.storage.id
+  topic_type             = "Microsoft.Storage.StorageAccounts"
 }
 
+/*
+resource "azurerm_eventgrid_system_topic_event_subscription" "etl_subscription" {
+  name                  = "etl-event-subscription"
+  resource_group_name   = azurerm_resource_group.rg.name
+  system_topic          = azurerm_eventgrid_system_topic.etl_topic.name
+  event_delivery_schema = "EventGridSchema"
 
-# Azure SQL Server
-resource "azurerm_mssql_server" "sql_server" {
-  name                         = "scalableetl-sqlserver"
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  version                      = "12.0"
-  administrator_login          = "etladmin"
-  administrator_login_password = var.sql_admin_password
+  included_event_types = [
+    "Microsoft.Storage.BlobCreated"
+  ]
+
+  webhook_endpoint {
+    url = "https://requestbin.io" # publiczny testowy endpoint, zawsze zwraca 200 OK
+  }
+
+}
+*/
+
+
+##############################################
+# AKS – Azure Kubernetes Service
+##############################################
+
+resource "azurerm_kubernetes_cluster" "aks_cluster" {
+  name                = "etl-aks-cluster"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  dns_prefix          = "etl-aks"
+
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_B4ms"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    environment = "dev"
+    project     = "ScalableETL"
+  }
 }
 
-# Azure SQL Database
-resource "azurerm_mssql_database" "sql_db" {
-  name                = "scalableetl-db"
-  server_id           = azurerm_mssql_server.sql_server.id
-  sku_name            = "Basic"
-  max_size_gb         = 2
-  zone_redundant      = false
-}
