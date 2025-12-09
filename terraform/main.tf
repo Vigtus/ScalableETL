@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 ##############################################
-# 📦 Azure Storage Account
+# Azure Storage Account
 ##############################################
 
 resource "azurerm_storage_account" "storage" {
@@ -55,7 +55,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "etl_subscription" 
   ]
 
   webhook_endpoint {
-    url = "https://requestbin.io" # publiczny testowy endpoint, zawsze zwraca 200 OK
+    url = "https://airflow-api.azurecontainerapps.io/api/v1/dags/etl_pipeline/dagRuns"
   }
 
 }
