@@ -1,23 +1,27 @@
 import os
 import pandas as pd
+import time
 
-# Pobierz nazwę pliku z ENV (domyślnie chunk_1.csv)
+start_time = time.time()
+
+# Pobierz nazwę pliku z ENV
 DATA_FILE = os.getenv("DATA_FILE", "chunk_1.csv")
 
-print(f"📥 Extracting data from {DATA_FILE}...")
+print(f"🚀 Start przetwarzania {DATA_FILE}")
+
+# Wczytaj dane
 df = pd.read_csv(DATA_FILE)
 
-print("🔄 Transforming data...")
-# Dla przykładu — policz sumę sprzedaży per kategoria (zależnie od kolumn)
+# 🔄 Przykładowa transformacja — zsumuj sprzedaż według kategorii
 if "Sale (Dollars)" in df.columns:
     df["Sale (Dollars)"] = df["Sale (Dollars)"].replace('[\$,]', '', regex=True).astype(float)
     summary = df.groupby("Category Name")["Sale (Dollars)"].sum().reset_index()
 else:
-    df["processed_value"] = df[df.columns[0]] * 2
-    summary = df
+    summary = df.copy()
 
+# Zapisz wynik
 output_file = f"processed_{os.path.basename(DATA_FILE)}"
-print(f"💾 Saving processed data to {output_file}...")
 summary.to_csv(output_file, index=False)
 
-print(f"✅ Finished processing {DATA_FILE}")
+elapsed = time.time() - start_time
+print(f"✅ Zakończono przetwarzanie {DATA_FILE} w {elapsed:.2f}s")

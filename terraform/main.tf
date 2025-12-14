@@ -28,6 +28,10 @@ resource "azurerm_storage_account" "storage" {
   blob_properties {
     versioning_enabled = false
   }
+
+    lifecycle {
+    prevent_destroy = true
+  }
 }
 
 
