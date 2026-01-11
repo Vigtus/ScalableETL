@@ -15,7 +15,7 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule=None,
     catchup=False,
-    max_active_runs=1,
+    max_active_runs=2,
     tags=["scaling", "keda", "test"],
 ) as dag:
 
