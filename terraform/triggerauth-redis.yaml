@@ -1,0 +1,10 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: redis-auth
+  namespace: airflow
+spec:
+  secretTargetRef:
+    - parameter: password
+      name: airflow-redis-password
+      key: password
