@@ -15,11 +15,12 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule=None,
     catchup=False,
-    max_active_runs=2,
+    max_active_runs=5,
+    max_active_tasks=10,
     tags=["scaling", "keda", "test"],
 ) as dag:
 
-    for i in range(5):
+    for i in range(10):
         PythonOperator(
             task_id=f"heavy_task_{i}",
             python_callable=heavy_task,
