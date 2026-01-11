@@ -5,7 +5,7 @@ import time
 import os
 
 def heavy_task(task_id):
-    duration = int(os.getenv("TRANSFORM_DURATION", 30))
+    duration = int(os.getenv("TRANSFORM_DURATION", 60))
     print(f"Task {task_id} started")
     time.sleep(duration)
     print(f"Task {task_id} finished")
