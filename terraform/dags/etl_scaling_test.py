@@ -4,11 +4,11 @@ from datetime import datetime
 import time
 import os
 
-def transform(task_id):
+def heavy_task(task_id):
     duration = int(os.getenv("TRANSFORM_DURATION", 60))
-    print(f"Transform {task_id} started")
+    print(f"Task {task_id} started")
     time.sleep(duration)
-    print(f"Transform {task_id} finished")
+    print(f"Task {task_id} finished")
 
 with DAG(
     dag_id="etl_scaling_test",
@@ -16,16 +16,12 @@ with DAG(
     schedule=None,
     catchup=False,
     max_active_runs=10,
-    concurrency=20,
     tags=["scaling", "keda", "test"],
 ) as dag:
 
-    transforms = []
-
     for i in range(20):
-        t = PythonOperator(
-            task_id=f"transform_{i}",
-            python_callable=transform,
+        PythonOperator(
+            task_id=f"heavy_task_{i}",
+            python_callable=heavy_task,
             op_args=[i],
         )
-        transforms.append(t)
