@@ -4,54 +4,28 @@ from datetime import datetime
 import time
 import os
 
-# -------------------------
-# TASK FUNCTIONS
-# -------------------------
-
-def extract():
-    print("Extract step started")
-    time.sleep(5)
-    print("Extract step finished")
-
-def transform():
-    print("Transform step started - simulating heavy workload")
-
-    # Symulacja długiego taska (blokuje workera)
+def transform(task_id):
     duration = int(os.getenv("TRANSFORM_DURATION", 60))
+    print(f"Transform {task_id} started")
     time.sleep(duration)
-
-    print("Transform step finished")
-
-def load():
-    print("Load step started")
-    time.sleep(5)
-    print("Load step finished")
-
-# -------------------------
-# DAG DEFINITION
-# -------------------------
+    print(f"Transform {task_id} finished")
 
 with DAG(
     dag_id="etl_scaling_test",
     start_date=datetime(2024, 1, 1),
-    schedule=None,           # ręczne uruchamianie
+    schedule=None,
     catchup=False,
+    max_active_runs=10,
+    concurrency=20,
     tags=["scaling", "keda", "test"],
 ) as dag:
 
-    extract_task = PythonOperator(
-        task_id="extract",
-        python_callable=extract,
-    )
+    transforms = []
 
-    transform_task = PythonOperator(
-        task_id="transform",
-        python_callable=transform,
-    )
-
-    load_task = PythonOperator(
-        task_id="load",
-        python_callable=load,
-    )
-
-    extract_task >> transform_task >> load_task
+    for i in range(20):
+        t = PythonOperator(
+            task_id=f"transform_{i}",
+            python_callable=transform,
+            op_args=[i],
+        )
+        transforms.append(t)
