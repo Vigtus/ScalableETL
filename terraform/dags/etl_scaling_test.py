@@ -5,7 +5,7 @@ import time
 import os
 
 def heavy_task(task_id):
-    duration = int(os.getenv("TRANSFORM_DURATION", 60))
+    duration = int(os.getenv("TRANSFORM_DURATION", 30))
     print(f"Task {task_id} started")
     time.sleep(duration)
     print(f"Task {task_id} finished")
@@ -15,11 +15,11 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule=None,
     catchup=False,
-    max_active_runs=10,
+    max_active_runs=1,
     tags=["scaling", "keda", "test"],
 ) as dag:
 
-    for i in range(20):
+    for i in range(5):
         PythonOperator(
             task_id=f"heavy_task_{i}",
             python_callable=heavy_task,
