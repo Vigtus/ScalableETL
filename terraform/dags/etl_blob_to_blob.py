@@ -1,51 +1,34 @@
 from airflow import DAG
 from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 import pandas as pd
-import os
-import tempfile
-
-STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
-STORAGE_KEY = os.environ["AZURE_STORAGE_KEY"]
-
-INPUT_CONTAINER = "input"
-OUTPUT_CONTAINER = "output"
-INPUT_BLOB = "sales.csv"
-OUTPUT_BLOB = "sales_processed.csv"
-
+import io
 
 def extract_transform_load():
-    hook = WasbHook(
-        wasb_conn_id=None,
-        login=STORAGE_ACCOUNT,
-        password=STORAGE_KEY
+    hook = WasbHook(wasb_conn_id="azure_blob_conn")
+
+    # --- Extract ---
+    csv_bytes = hook.read_file(
+        container_name="input",
+        blob_name="sales.csv"
     )
 
-    with tempfile.TemporaryDirectory() as tmp:
-        input_path = f"{tmp}/input.csv"
-        output_path = f"{tmp}/output.csv"
+    df = pd.read_csv(io.BytesIO(csv_bytes))
 
-        # --- EXTRACT ---
-        hook.get_file(
-            file_path=input_path,
-            container_name=INPUT_CONTAINER,
-            blob_name=INPUT_BLOB
-        )
+    # --- Transform ---
+    df["total"] = df["price"] * df["quantity"]
 
-        # --- TRANSFORM ---
-        df = pd.read_csv(input_path)
-        df["total_price"] = df["price"] * df["quantity"]
-        df.to_csv(output_path, index=False)
+    # --- Load ---
+    output_buffer = io.StringIO()
+    df.to_csv(output_buffer, index=False)
 
-        # --- LOAD ---
-        hook.load_file(
-            file_path=output_path,
-            container_name=OUTPUT_CONTAINER,
-            blob_name=OUTPUT_BLOB,
-            overwrite=True
-        )
-
+    hook.load_string(
+        data=output_buffer.getvalue(),
+        container_name="output",
+        blob_name="sales_processed.csv",
+        overwrite=True
+    )
 
 with DAG(
     dag_id="etl_blob_to_blob",
@@ -57,5 +40,5 @@ with DAG(
 
     etl_task = PythonOperator(
         task_id="extract_transform_load",
-        python_callable=extract_transform_load,
+        python_callable=extract_transform_load
     )

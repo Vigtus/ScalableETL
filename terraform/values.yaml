@@ -34,18 +34,6 @@ workers:
     limits:
       cpu: "1500m"
       memory: "4Gi"
-  env:
-    - name: AZURE_STORAGE_ACCOUNT
-      valueFrom:
-        secretKeyRef:
-          name: azure-storage-secret
-          key: AZURE_STORAGE_ACCOUNT
-
-    - name: AZURE_STORAGE_KEY
-      valueFrom:
-        secretKeyRef:
-          name: azure-storage-secret
-          key: AZURE_STORAGE_KEY
 
 # --- Log groomer sidecar  ---
 logGroomerSidecar:
@@ -85,3 +73,8 @@ dags:
     subPath: terraform/dags
     depth: 1
     wait: 60
+
+envFrom:
+  - secretRef:
+      name: azure-storage-secret
+
