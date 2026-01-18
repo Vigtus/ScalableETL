@@ -1,7 +1,7 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: airflow-worker-scaledobject
+  name: airflow-worker
   namespace: airflow
 spec:
   scaleTargetRef:
@@ -9,10 +9,13 @@ spec:
     name: airflow-worker
   minReplicaCount: 1
   maxReplicaCount: 5
-  pollingInterval: 15
+  pollingInterval: 5
   cooldownPeriod: 60
   triggers:
-    - type: cpu
-      metricType: Utilization
+    - type: redis
       metadata:
-        value: "50"
+        address: airflow-redis.airflow.svc.cluster.local:6379
+        listName: default          # ← TO JEST KLUCZ
+        listLength: "10"            # testowo nisko, żeby nie przegapić backlogu
+      authenticationRef:
+        name: redis-auth

@@ -5,6 +5,10 @@ terraform {
       version = "~>3.0"
     }
   }
+
+  backend "local" {
+    path = "state/terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
@@ -14,8 +18,9 @@ provider "azurerm" {
   tenant_id       = "ab840be7-206b-432c-bd22-4c20fdc1b261"
 }
 
-terraform {
-  backend "local" {
-    path = "state/terraform.tfstate"
-  }
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.aks_cluster.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks_cluster.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks_cluster.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks_cluster.kube_config[0].cluster_ca_certificate)
 }

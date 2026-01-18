@@ -92,3 +92,18 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 }
 
+##############################################
+# Blob Containers
+##############################################
+
+resource "azurerm_storage_container" "input" {
+  name                  = "input"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "output" {
+  name                  = "output"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}

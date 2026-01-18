@@ -1,15 +1,32 @@
+# --- Executor ---
 executor: CeleryExecutor
 
+# --- Obrazy ---
+images:
+  airflow:
+    repository: apache/airflow
+    tag: "3.0.2"
+    pullPolicy: IfNotPresent
+
+  gitSync:
+    repository: registry.k8s.io/git-sync/git-sync
+    tag: v4.3.0
+    pullPolicy: IfNotPresent
+
+# --- Redis ---
 redis:
   enabled: true
 
+# --- PostgreSQL ---
 postgresql:
   enabled: true
   image:
     repository: postgres
     tag: "16.3"
 
+# --- Workers ---
 workers:
+  replicas: 1
   resources:
     requests:
       cpu: "500m"
@@ -17,11 +34,38 @@ workers:
     limits:
       cpu: "1500m"
       memory: "4Gi"
+  env:
+    - name: AZURE_STORAGE_ACCOUNT
+      valueFrom:
+        secretKeyRef:
+          name: azure-storage-secret
+          key: AZURE_STORAGE_ACCOUNT
 
+    - name: AZURE_STORAGE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: azure-storage-secret
+          key: AZURE_STORAGE_KEY
 
+# --- Log groomer sidecar  ---
+logGroomerSidecar:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+
+# --- GitSync sidecar  ---
+gitSync:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+
+# --- KEDA ---
 keda:
   enabled: true
 
+# --- Metrics / StatsD ---
 metrics:
   enabled: true
 
@@ -32,6 +76,7 @@ config:
     statsd_port: 9125
     statsd_prefix: airflow
 
+# --- DAGs (GitSync) ---
 dags:
   gitSync:
     enabled: true
