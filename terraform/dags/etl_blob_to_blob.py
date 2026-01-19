@@ -6,9 +6,13 @@ import os
 from azure.storage.blob import BlobServiceClient
 from io import StringIO
 
+
 def extract_transform_load():
+    print("ETL started")
+
     account = os.environ["AZURE_STORAGE_ACCOUNT"]
     key = os.environ["AZURE_STORAGE_KEY"]
+    print("Azure credentials loaded")
 
     conn_str = (
         f"DefaultEndpointsProtocol=https;"
@@ -18,6 +22,7 @@ def extract_transform_load():
     )
 
     blob_service = BlobServiceClient.from_connection_string(conn_str)
+    print("Connected to Azure Blob Storage")
 
     input_container = "input"
     output_container = "output"
@@ -30,11 +35,13 @@ def extract_transform_load():
         blob=input_blob
     )
     csv_data = blob_client.download_blob().readall().decode("utf-8")
+    print("CSV downloaded from input blob")
 
     df = pd.read_csv(StringIO(csv_data))
 
     # --- TRANSFORM ---
     df["total"] = df["price"] * df["quantity"]
+    print("Transformation finished")
 
     # --- UPLOAD ---
     out_csv = df.to_csv(index=False)
@@ -43,8 +50,12 @@ def extract_transform_load():
         container=output_container,
         blob=output_blob
     )
-
     out_blob_client.upload_blob(out_csv, overwrite=True)
+    print("CSV uploaded to output blob")
+
+    print("ETL finished successfully")
+    return True   
+
 
 with DAG(
     dag_id="etl_blob_to_blob",

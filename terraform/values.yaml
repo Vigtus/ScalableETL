@@ -74,14 +74,10 @@ dags:
     depth: 1
     wait: 60
 
-env:
-  - name: AIRFLOW__CORE__FERNET_KEY
-    value: "tgkRrKIczMmC7XVtsYwRP-V-ahq_kaPG8TjPcaG8_x8=
-
-  - name: AIRFLOW__API__SECRET_KEY
-    value: "QS2iRO_qA1VZ1bDRjtOUQZH2mw9iPhOG1P2GjAFkuOY"
-
 envFrom:
   - secretRef:
       name: azure-storage-secret
 
+extraPipPackages:
+  - pandas
+  - azure-storage-blob
