@@ -43,6 +43,10 @@ def extract_transform_load():
     df["total"] = df["price"] * df["quantity"]
     print("Transformation finished")
 
+        # 🔥 SYMULACJA CIĘŻKIEGO ZADANIA (KEDA MUSI TO ZOBACZYĆ)
+    print("Simulating heavy processing (sleep 60s)")
+    time.sleep(60)
+
     # --- UPLOAD ---
     out_csv = df.to_csv(index=False)
 
